@@ -99,7 +99,7 @@ sequenceDiagram
     Community->>Contract: voteOnDispute(stake-weighted)
     Contract->>Contract: resolveDispute()
     Contract-->>Agent: Reputation Adjusted
-</mermaid>
+```
 
 ---
 
