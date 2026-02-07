@@ -20,7 +20,7 @@ AgentTrust functions as an **Agentic Credit Bureau**. It enables autonomous enti
 ## 🔗 Core API (On-Chain)
 
 ### Deployed Address (Base Sepolia)
-`0xC0cE4992078Dfc3249eFffBF00c82795a5d9058a`
+`0x0B1a95c1461B18c4E8c63BC07E2d4e61dC5Db4CC`
 
 ### Main Actions
 
