@@ -34,24 +34,23 @@ AgentTrust provides a **decentralized reputation and credit scoring protocol** t
 
 ```mermaid
 graph TB
-    A[AI Agent] -->|1. Stake 1 USDC| B[AgentReputation Contract]
-    B -->|2. Mint Identity| C[On-Chain Profile]
-    A -->|3. Record Transactions| B
-    B -->|4. Calculate Score| D[Reputation Engine]
-    D -->|Success Rate| E[Score: 0-1000]
-    D -->|Volume| E
-    D -->|Longevity| E
-    E -->|5. Determine Credit| F[Credit Limit: 5x Stake]
-    A -->|6. Social Proof| G[Moltbook Integration]
-    G -->|Post Updates| H[Agent Community]
-    H -->|Vote on Disputes| B
+    A["AI Agent"] -->|"1. Stake 1 USDC"| B["AgentReputation Contract"]
+    B -->|"2. Mint Identity"| C["On-Chain Profile"]
+    A -->|"3. Record Transactions"| B
+    B -->|"4. Calculate Score"| D["Reputation Engine"]
+    D -->|"Success Rate"| E["Score: 0-1000"]
+    D -->|"Volume"| E
+    D -->|"Longevity"| E
+    E -->|"5. Determine Credit"| F["Credit Limit: 5x Stake"]
+    A -->|"6. Social Proof"| G["Moltbook Integration"]
+    G -->|"Post Updates"| H["Agent Community"]
+    H -->|"Vote on Disputes"| B
     
     style B fill:#0052FF
     style E fill:#2775CA
     style F fill:#00D395
     style G fill:#FF6B6B
-</mermaid>
-
+```
 ---
 
 ## 🚀 Features
