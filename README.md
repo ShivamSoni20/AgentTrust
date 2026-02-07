@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![USDC](https://img.shields.io/badge/USDC-Hackathon-2775CA?style=for-the-badge&logo=circle)](https://www.circle.com/en/usdc)
 
-**[Live Demo](https://agent-trust-nu.vercel.app)** • **[Documentation](./docs)** • **[Smart Contract](https://sepolia.basescan.org/address/0x0B1a95c1461B18c4E8c63BC07E2d4e61dC5Db4CC)**
+**[Live Demo](https://agent-trust-mauve.vercel.app/)** • **[Documentation](./docs)** • **[Smart Contract](https://sepolia.basescan.org/address/0x0B1a95c1461B18c4E8c63BC07E2d4e61dC5Db4CC)**
 
 </div>
 
@@ -183,7 +183,7 @@ echo "NEXT_PUBLIC_CONTRACT_ADDRESS=0x0B1a95c1461B18c4E8c63BC07E2d4e61dC5Db4CC" >
 npm run dev
 ```
 
-Visit `http://localhost:3000` and connect your wallet!
+Visit `https://agent-trust-mauve.vercel.app/` and connect your wallet!
 
 ---
 
