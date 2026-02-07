@@ -2,19 +2,27 @@
 
 import React, { useState } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { Shield, CreditCard, Activity, BarChart3, AlertCircle, Loader2, SendHorizonal, History, Scale } from 'lucide-react'
+import {
+  Shield, CreditCard, Activity, BarChart3, AlertCircle, Loader2,
+  SendHorizonal, History, Scale, Share2, Settings, ExternalLink,
+  Droplets, Coins, Terminal
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AGENT_REPUTATION_ADDRESS } from '@/config/wagmi'
 import { useAgent } from '@/hooks/useAgent'
+import { useMoltbook } from '@/hooks/useMoltbook'
 import { formatUnits } from 'viem'
 import { TransactionList } from '@/components/TransactionList'
+import { MoltbookFeed } from '@/components/MoltbookFeed'
 
-type Tab = 'dashboard' | 'transactions' | 'disputes'
+type Tab = 'dashboard' | 'transactions' | 'social' | 'faucets' | 'config'
 
 export default function Home() {
   const { address, agent, isConnected, isRegistering, register, usdcBalance, txHistory, disputeCounter } = useAgent()
-  const [stakeAmount, setStakeAmount] = useState('100')
+  const { apiKey, profile, saveApiKey, logout, error: moltError, isLoading: isMoltLoading } = useMoltbook()
+
+  const [stakeAmount, setStakeAmount] = useState('1')
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
+  const [inputKey, setInputKey] = useState('')
 
   const handleRegister = async () => {
     try {
@@ -38,25 +46,23 @@ export default function Home() {
           <span className="text-xl font-bold tracking-tight">AgentTrust</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-8 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab('transactions')}
-            className={`text-sm font-medium transition-colors ${activeTab === 'transactions' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
-          >
-            History
-          </button>
-          <button
-            onClick={() => setActiveTab('disputes')}
-            className={`text-sm font-medium transition-colors ${activeTab === 'disputes' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
-          >
-            Disputes
-          </button>
+        <div className="hidden md:flex items-center gap-6 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 overflow-x-auto">
+          {[
+            { id: 'dashboard', icon: Activity, label: 'Dashboard' },
+            { id: 'transactions', icon: History, label: 'History' },
+            { id: 'social', icon: Share2, label: 'Social' },
+            { id: 'faucets', icon: Droplets, label: 'Faucets' },
+            { id: 'config', icon: Settings, label: 'Config' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as Tab)}
+              className={`flex items-center gap-2 text-xs font-bold transition-colors whitespace-nowrap ${activeTab === tab.id ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-4">
@@ -112,12 +118,12 @@ export default function Home() {
                     desc: '5x Stake * Rep Multiplier'
                   },
                   {
-                    title: 'Global Disputes',
-                    value: `${disputeCounter} Total`,
-                    icon: Scale,
+                    title: 'Moltbook Karma',
+                    value: profile ? `${profile.karma} pts` : 'Not Connected',
+                    icon: Share2,
                     color: 'text-emerald-500',
                     bg: 'bg-emerald-500/10',
-                    desc: 'Community-governed'
+                    desc: 'Global agent social proof'
                   },
                 ].map((stat, i) => (
                   <div key={i} className="glass p-6 rounded-2xl card-hover border border-white/5">
@@ -143,7 +149,7 @@ export default function Home() {
                     </h2>
                     <p className="text-gray-400 mb-8 leading-relaxed text-lg">
                       {isRegistered
-                        ? 'Your identity is verified. Use the dashboard to track reputation, increase your stake, or participate in the resolution system.'
+                        ? 'Your identity is verified. Use the dashboard to track reputation, increase your stake, or participate in the social layer.'
                         : 'Autonomous agents require economic identity. Stake USDC to establish your reputation and unlock decentralized credit lines.'
                       }
                     </p>
@@ -155,7 +161,7 @@ export default function Home() {
                             type="number"
                             value={stakeAmount}
                             onChange={(e) => setStakeAmount(e.target.value)}
-                            placeholder="Min 100 USDC"
+                            placeholder="Min 1 USDC"
                             className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all flex-1 font-mono"
                           />
                           <button
@@ -175,7 +181,7 @@ export default function Home() {
                           Boost Stake
                         </button>
                         <button className="px-10 py-4 border border-white/5 hover:bg-white/5 rounded-2xl font-bold transition-all text-gray-400 hover:text-white">
-                          Link Wallet
+                          Link Secondary Wallet
                         </button>
                       </div>
                     )}
@@ -187,7 +193,7 @@ export default function Home() {
                         <div className="w-3 h-3 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/40 transition-colors"></div>
                         <div className="w-3 h-3 rounded-full bg-green-500/20 group-hover:bg-green-500/40 transition-colors"></div>
                       </div>
-                      <span className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Agent Metadata</span>
+                      <span className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Identity Metadata</span>
                     </div>
                     <pre className="font-mono text-sm leading-relaxed">
                       <code className="text-blue-400">
@@ -196,11 +202,94 @@ export default function Home() {
   "registered": ${!!isRegistered},
   "stake": "${isRegistered ? formatUnits(agent.stakeAmount, 6) : '0.00'} USDC",
   "rep": ${isRegistered ? agent.reputationScore : 0},
-  "limit": "${isRegistered ? (Number(agent.reputationScore) / 1000 * Number(agent.stakeAmount) / 1e6 * 5).toFixed(2) : '0.00'}",
+  "molt_karma": ${profile?.karma || 0},
   "network": "Base Sepolia"
 }`}
                       </code>
                     </pre>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'social' && (
+            <motion.div
+              key="social"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold flex items-center gap-3">
+                    <Share2 className="w-8 h-8 text-emerald-500" />
+                    Moltbook Social
+                  </h2>
+                  <p className="text-gray-400 mt-2">The decentralized communication layer for verify agents.</p>
+                </div>
+              </div>
+              <MoltbookFeed />
+            </motion.div>
+          )}
+
+          {activeTab === 'faucets' && (
+            <motion.div
+              key="faucets"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              className="space-y-12"
+            >
+              <div className="text-center space-y-4">
+                <h2 className="text-4xl font-bold tracking-tight">Fuel Your Agent</h2>
+                <p className="text-gray-400 text-lg">Acquire testnet ETH and USDC to interact with the AgentTrust protocol.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="glass p-8 rounded-3xl border border-white/5 space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-blue-500/10">
+                      <Droplets className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">Base Sepolia ETH</h3>
+                      <p className="text-sm text-gray-400">Required for gas fees</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      { name: 'BuidlGuidl Faucet', url: 'https://base-sepolia-faucet.buidlguidl.com/' },
+                      { name: 'Base Official Faucet', url: 'https://bridge.base.org/faucet' },
+                      { name: 'QuickNode Faucet', url: 'https://faucet.quicknode.com/base/sepolia' }
+                    ].map(f => (
+                      <li key={f.name}>
+                        <a href={f.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+                          <span className="font-medium">{f.name}</span>
+                          <ExternalLink className="w-4 h-4 text-gray-500" />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="glass p-8 rounded-3xl border border-white/5 space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-emerald-500/10">
+                      <Coins className="w-8 h-8 text-emerald-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">Mock USDC Tokens</h3>
+                      <p className="text-sm text-gray-400">Required for staking</p>
+                    </div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-black/40 border border-white/5 font-mono text-sm space-y-3">
+                    <p className="text-gray-400 mb-2">// Self-mint 1000 USDC (Requires Gas)</p>
+                    <button className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600/10 text-emerald-400 rounded-xl font-bold border border-emerald-600/20 hover:bg-emerald-600/20 transition-all">
+                      <Terminal className="w-4 h-4" />
+                      Mint Test USDC
+                    </button>
                   </div>
                 </div>
               </div>
@@ -223,44 +312,60 @@ export default function Home() {
                   </h2>
                   <p className="text-gray-400 mt-2">Latest economic activity from your agent and sub-wallets.</p>
                 </div>
-                {isRegistered && (
-                  <button className="px-6 py-2 glass border-blue-500/20 text-blue-400 rounded-xl text-sm font-semibold hover:bg-blue-500/10 transition-colors">
-                    Filter by Type
-                  </button>
-                )}
               </div>
               <TransactionList transactions={txHistory || []} />
             </motion.div>
           )}
 
-          {activeTab === 'disputes' && (
+          {activeTab === 'config' && (
             <motion.div
-              key="disputes"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
+              key="config"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-2xl mx-auto space-y-8"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-3xl font-bold flex items-center gap-3">
-                    <Scale className="w-8 h-8 text-emerald-500" />
-                    Network Governance
-                  </h2>
-                  <p className="text-gray-400 mt-2">Vote on active disputes to maintain the integrity of the ecosystem.</p>
-                </div>
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-bold">Platform Configuration</h2>
+                <p className="text-gray-400">Manage your credentials and external integration keys.</p>
               </div>
 
-              <div className="glass rounded-3xl p-12 text-center border border-white/5 bg-emerald-500/[0.02]">
-                <AlertCircle className="w-16 h-16 text-emerald-600/50 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold mb-3 tracking-tight">All Quiet in the Network</h3>
-                <p className="text-gray-400 max-w-md mx-auto text-lg leading-relaxed">
-                  There are currently no active disputes. Your reputation score is safe and the network is operating within protocol parameters.
-                </p>
-                <div className="mt-8 flex justify-center gap-4">
-                  <button className="px-8 py-3 bg-emerald-600/10 text-emerald-400 rounded-xl font-bold hover:bg-emerald-600/20 border border-emerald-600/20 transition-all">
-                    View Archival Records
-                  </button>
+              <div className="glass p-8 rounded-3xl border border-white/5 space-y-8">
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-400">Moltbook API Key</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={inputKey}
+                      onChange={(e) => setInputKey(e.target.value)}
+                      placeholder={apiKey ? '••••••••••••••••' : 'moltbook_...'}
+                      className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all flex-1 font-mono"
+                    />
+                    <button
+                      onClick={() => saveApiKey(inputKey)}
+                      disabled={isMoltLoading}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition-all disabled:opacity-50"
+                    >
+                      {isMoltLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save Key'}
+                    </button>
+                  </div>
+                  {moltError && <p className="text-xs text-rose-400 font-medium">{moltError}</p>}
+                  {apiKey && (
+                    <button onClick={logout} className="text-xs text-gray-500 hover:text-white underline">
+                      Disconnect Moltbook
+                    </button>
+                  )}
+                </div>
+
+                <div className="pt-6 border-t border-white/5">
+                  <h4 className="text-sm font-bold mb-4">Contract Protocol</h4>
+                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                      <span className="text-sm font-mono text-gray-300">AgentReputation v1.0.0</span>
+                    </div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest px-2 py-1 rounded bg-white/5 border border-white/5">Verified</span>
+                  </div>
                 </div>
               </div>
             </motion.div>

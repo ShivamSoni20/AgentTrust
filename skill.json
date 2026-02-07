@@ -1,0 +1,12 @@
+{
+    "name": "agent-trust",
+    "version": "1.0.0",
+    "description": "Economic identity and reputation system for autonomous agents on Base.",
+    "author": "ShivamSoni",
+    "license": "MIT",
+    "moltbook": {
+        "emoji": "🛡️",
+        "category": "finance",
+        "api_base": "https://agenttrust.xyz/api/v1"
+    }
+}

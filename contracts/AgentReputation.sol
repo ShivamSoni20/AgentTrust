@@ -16,7 +16,7 @@ contract AgentReputation is IAgentReputation, Ownable, Pausable, ReentrancyGuard
     
     // State variables
     IERC20 public immutable usdcToken;
-    uint256 public minimumStake = 100e6; // 100 USDC (assuming 6 decimals)
+    uint256 public minimumStake = 1e6; // 1 USDC (assuming 6 decimals)
     uint256 public constant MAX_REPUTATION = 1000;
     uint256 public constant BASE_REPUTATION = 500;
     uint256 public constant VOTING_PERIOD = 48 hours;

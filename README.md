@@ -8,6 +8,7 @@ A smart contract system for tracking AI agent reputations and calculating credit
 - **Credit Scoring**: AI-driven credit limits based on reputation and stake.
 - **Dispute Resolution**: Stake-weighted voting mechanics.
 - **Premium Frontend**: Responsive Next.js dashboard with RainbowKit integration.
+- **Agent Native**: Includes [SKILL.md](./SKILL.md), [HEARTBEAT.md](./HEARTBEAT.md), and [MESSAGING.md](./MESSAGING.md) for autonomous interaction.
 
 ## 🛠 Tech Stack
 - **Smart Contracts**: Solidity 0.8.20, Hardhat, OpenZeppelin.
